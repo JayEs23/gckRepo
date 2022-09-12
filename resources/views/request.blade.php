@@ -12,7 +12,7 @@
     <!-- Page content -->
     <div class="container-fluid mt-6">
         <div class="row justify-content-center">
-            <form method="post" action="{{ route('requests.update',$request->id) }}" autocomplete="off">
+            <form method="post" action="{{ route('requests.update') }}" autocomplete="off">
                 @csrf
                 @method('PUT')
                 <div class="row">
@@ -28,6 +28,7 @@
                         <div class="row">
                             <div class="col-8">
                                 <h3 class="mb-0"> REQUISITION FORM</h3>
+                                <input type="hidden" name="id" value="{{$request->id}}">
                             </div>
                             <div class="col-4">
                                 <select class='js-example-basic-single w-100 form-control' name='cat' oninput='setRequestForm(this.value)' name='districts' id='districts' required>
