@@ -42,4 +42,27 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function makeAccount(){
+        
+    }
+
+    public function makeAdmin(){
+        
+    }
+
+    public function makeZonalHead(){
+        
+    }
+
+    public function makeDepartmentHead($userId,$deptId){
+        
+    }
+    public function makeAccount(){
+        
+    }
+
+    public function makeAccount(){
+        
+    }
 }
