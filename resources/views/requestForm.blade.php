@@ -69,13 +69,12 @@
                         <div class="row icon-examples mt-2">
                             <div class="col-lg-8 col-md-6">
                               <label class="form-control-label" for="input-name">{{ __('Purpose for the requested item(s)') }}</label>
-                                <textarea name="purpose" class="form-control " rows="6" placeholder="Short note stating the purpose of the request, and any other relevant details to be considered during review of this application." required>
-                                </textarea>
+                                <textarea name="purpose" class="form-control " rows="6" placeholder="Short note stating the purpose of the request, and any other relevant details to be considered during review of this application." required></textarea>
                             </div>
                             <div class="col-lg-4 col-md-6">
                                 <div class="col-lg-12">
                                   <label class="form-control-label" for="input-name">{{ __('Location/Region/Zone') }}</label>
-                                    <input type="text" name="department" id="input-date" rows="6" class="form-control mt-2 form-control-alternative{{ $errors->has('department') ? ' is-invalid' : '' }}" placeholder="{{ __('Location/Region/Zone') }}" value="" required >
+                                    <input type="text" name="zone" id="input-date" rows="6" class="form-control mt-2 form-control-alternative{{ $errors->has('department') ? ' is-invalid' : '' }}" placeholder="{{ __('Location/Region/Zone') }}" value="" required >
                                 </div>
                                 <div class="col-lg-12 mt-2">
                                   <label class="form-control-label" for="input-name">{{ __('Program/Event') }}</label>

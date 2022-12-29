@@ -19,7 +19,6 @@ class RequestController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
 
-        //$data['requests'] = Requisition::all();
         $data = [
             'user' => $user,
             'users' => User::all(),
@@ -89,7 +88,7 @@ class RequestController extends Controller
                 $item->qty = $value['qty'];
                 $item->price = $value['price'];
                 $item->amount = $value['amount'];
-                //$item->save();
+                $item->save();
             }
         }
 
@@ -144,8 +143,8 @@ class RequestController extends Controller
         $req = Requisition::find($id);
         $req->phone = $request['phone'];
         $req->category = $request['cat'];
-        $req->department = $request['location'];
-        $req->currency =$request['currency']; 
+        $req->department = $request['department'];
+        $req->currency = empty($request['currency']) ? $req->currency : $request['currency']; 
         $req->amount =$request['amount']; 
         $req->event =$request['event'];
         $req->zone =$request['zone']; 
@@ -157,7 +156,7 @@ class RequestController extends Controller
 
         $stat = $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
     }
 
     /**
@@ -171,7 +170,7 @@ class RequestController extends Controller
         $req = Requisition::find($id);
         $req->delete();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
     }
 
     public function approved(){
@@ -180,22 +179,25 @@ class RequestController extends Controller
         return view('requests',$data);  
 
     }
-    public function approve($id){
+    public function approve(Request $request){
         //Approve Request
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 1;
         $req->remark = 'Approved';
         $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
 
     }
-    public function decline($id){
+    public function decline(Request $request){
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 2;
+        $req->remark = $request['remark'];
         $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been declined Successfully.');  
         
     }
 
@@ -204,12 +206,13 @@ class RequestController extends Controller
         return view('requests',$data);  
     }
 
-    public function deny($id){
+    public function deny(Request $request){
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 3;
-        $req->remark = 'Denied';
+        $req->remark = $_GET['remark'];
         $req->save();
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
     }
 
     public function denied(){
@@ -217,12 +220,13 @@ class RequestController extends Controller
         return view('requests',$data);  
     }
 
-    public function resolve($id){
+    public function resolve(Request $request){
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 4;
         $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
     }
 
     public function resolved(){

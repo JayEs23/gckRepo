@@ -16,10 +16,10 @@
             $approved[] = $request;
         }
         else if ($request->status == 2) {
-            $declined[] = $request;
+            $denied[] = $request;
         }
         else if ($request->status == 3) {
-            $denied[] = $request;
+            $declined[] = $request;
         }
         else if ($request->status == 4) {
             $resolved[] = $request;
@@ -329,21 +329,48 @@
                                         {{$req->date}}
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal{{$req->id}}"><i class="fas fa-eye"></i></button>
-                                        <a class="btn btn-dark btn-sm" href="{{ route('requests.show',$req->id) }}"><i class="fas fa-edit"></i></a>
+                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal{{$req->id}}" data-placement="left" title="View Request Details"><i class="fas fa-eye"></i></button>
+                                        <a class="btn btn-dark btn-sm" href="{{ route('requests.show',$req->id) }}" data-placement="left" title="Edit Request"><i class="fas fa-edit"></i></a>
                                         @if(auth()->user()->is_admin == 2)
-                                        <a class="btn btn-success btn-sm" href="{{ route('requests.resolve',$req->id) }}"><i class="fas fa-check"></i></a>
-                                         <a class="btn btn-danger btn-sm" href="{{ route('requests.decline',$req->id) }}"><i class="fas fa-check"></i></a>
+                                        <a class="btn btn-success btn-sm" href="{{ route('requests.resolve',$req->id) }}" data-placement="left" title="Resolve Request"><i class="fas fa-check"></i></a>
+                                         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#decline{{$req->id}}"  data-placement="left" title="Decline"><i class="fas fa-check"></i></button>
                                         @endif
                                         @if(auth()->user()->is_admin == 1)
-                                       
-                                        
-                                         <a class="btn btn-success btn-sm" href="{{ route('requests.approve',$req->id) }}"><i class="fas fa-check"></i></a>
-                                         <a class="btn btn-danger btn-sm" href="{{ route('requests.deny',$req->id) }}"><i class="fas fa-times-circle"></i></a>
+                                         <a class="btn btn-success btn-sm" href="{{ route('requests.approve',$req->id) }}" data-placement="left" title="Approve"><i class="fas fa-check"></i></a>
+                                         <a class="btn btn-danger btn-sm" href="{{ route('requests.deny',$req->id) }}" data-placement="left" title="Deny Request"><i class="fas fa-times-circle"></i></a>
                                         @endif
                                         
                                          
                                     </td>
+                                    <div class="modal fade" id="decline{{$req->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                          <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">{{$user->name}}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <form method="post" action="../requests/decline">
+                                                @csrf
+                                                <div class="modal-body">
+
+
+                                                <h3>Type Reason for Declining </h3>
+                                                <input type="text" name="remark" class="form-control" required>
+                                                <input type="hidden" name="id" value="{{$req->id}}" class="form-control" required>
+                                                <button class="btn btn-danger mt-5">Decline</button>
+                                              </div>
+                                              </form>
+                                             
+                                              <div class="modal-footer">
+                                               
+                                                 
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
                                 </tr>
                                 <!-- Modal -->
                                     <div class="modal fade" id="exampleModal{{$req->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -387,7 +414,7 @@
                                                     <label>Currency : <span><b>{!!$req->currency!!}</b></span></label>
                                                 </div>
                                                 <div class="col-xl-6">
-                                                    <label>Amount : <span><b>{{number_format($req->event)}}</b></span></label>
+                                                    <label>Amount : <span><b>{{number_format($req->amount)}}</b></span></label>
                                                 </div>
                                                 
                                             </div>

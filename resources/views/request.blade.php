@@ -12,9 +12,8 @@
     <!-- Page content -->
     <div class="container-fluid mt-6">
         <div class="row justify-content-center">
-            <form method="post" action="{{ route('requests.update') }}" autocomplete="off">
+            <form method="post" action="{{ route('requests.update',$request->id) }}" autocomplete="off">
                 @csrf
-                @method('PUT')
                 <div class="row">
                     @if (Session::has('success'))
                     <div class="alert alert-success text-center">
@@ -77,7 +76,7 @@
                             <div class="col-lg-4 col-md-6">
                                 <div class="col-lg-12 col-md-6">
                                   <label class="form-control-label" for="input-name">{{ __('Location/Region/Zone') }}</label>
-                                    <input type="text" name="department" id="input-date" rows="6" class="form-control mt-2 form-control-alternative{{ $errors->has('department') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" value="{{$request->zone}}" required >
+                                    <input type="text" name="zone" id="input-date" rows="6" class="form-control mt-2 form-control-alternative{{ $errors->has('department') ? ' is-invalid' : '' }}" placeholder="{{ __('Email') }}" value="{{$request->zone}}" required >
                                 </div>
                                 <div class="col-lg-12 col-md-6 mt-2">
                                   <label class="form-control-label" for="input-name">{{ __('Program/Event') }}</label>
@@ -93,13 +92,13 @@
                             <div class="col-lg-10 col-md-12"> 
                                 <div class="row">
                                     <div class="col-lg-4 col-md-6"> 
-                                        <input type='radio' class='form-check-input mt-2' name='currency' id='optionsRadios1' value='&#163' <?php echo ($request->currency == '&#163')? 'selected':'' ; ?>><span class="ml-2">Pound Sterling (&#163)</span>
+                                        <input type='radio' class='form-check-input mt-2' name='currency' id='optionsRadios1' value='&#163' <?php echo ($request->currency == '£')? 'selected':'' ; ?>><span class="ml-2">Pound Sterling (&#163)</span>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
-                                        <input type='radio' class='form-check-input mt-2' name='currency' id='optionsRadios2' value='&#36' <?php echo ($request->currency == '&#36')? 'selected':'' ; ?>><span class="ml-2">US Dollars (&#36)</span>
+                                        <input type='radio' class='form-check-input mt-2' name='currency' id='optionsRadios2' value='&#36' <?php echo ($request->currency == '$')? 'selected':'' ; ?>><span class="ml-2">US Dollars (&#36)</span>
                                     </div>
                                     <div class="col-lg-4 col-md-6">
-                                        <input type='radio' class='form-check-input mt-2' name='currency' id='optionsRadios3' value='&#8358' <?php echo ($request->currency == '&#8358')? 'selected':'' ; ?>><span class="ml-2">Naira(&#8358)</span>
+                                        <input type='radio' class='form-check-input mt-2' name='currency' id='optionsRadios3' value='&#8358' <?php echo ($request->currency == '₦')? 'selected':'' ; ?>><span class="ml-2">Naira(&#8358)</span>
                                     </div>             
                                 </div>
                             </div>

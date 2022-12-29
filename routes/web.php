@@ -59,7 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/requests', 'App\Http\Controllers\RequestController@store')->name('requests.save');
 
 	//Update Request
-	Route::get('/requests/{id}/edit', 'App\Http\Controllers\RequestController@update')->name('requests.update');
+	Route::post('/requests/{id}/edit', 'App\Http\Controllers\RequestController@update')->name('requests.update');
 
 	//Fetch Request details
 	Route::get('/requests/{id}', 'App\Http\Controllers\RequestController@show')->name('requests.show');
@@ -67,14 +67,10 @@ Route::group(['middleware' => 'auth'], function () {
 	//Delete Request
 	Route::delete('/requests/{id}', 'App\Http\Controllers\RequestController@destroy')->name('requests.destroy');
 	Route::get('/requests/{id}/approve', 'App\Http\Controllers\RequestController@approve')->name('requests.approve');
-	Route::get('/requests/{id}/deny', 'App\Http\Controllers\RequestController@deny')->name('requests.deny');
-	Route::get('/requests/{id}/deny', 'App\Http\Controllers\RequestController@decline')->name('requests.decline');
+	Route::post('/requests/deny', 'App\Http\Controllers\RequestController@deny')->name('requests.deny');
+	Route::post('/requests/decline', 'App\Http\Controllers\RequestController@decline')->name('requests.decline');
 	Route::get('/requests/{id}/resolve', 'App\Http\Controllers\RequestController@resolve')->name('requests.resolve');
-	Route::get('forms', function () {return view('pages.forms');})->name('forms'); 
-	Route::get('upgrade', function () {return view('pages.upgrade');})->name('upgrade'); 
-	Route::get('map', function () {return view('pages.maps');})->name('map');
-	Route::get('icons', function () {return view('pages.icons');})->name('icons'); 
-	Route::get('table-list', function () {return view('pages.tables');})->name('table');
+	
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
 });
 
