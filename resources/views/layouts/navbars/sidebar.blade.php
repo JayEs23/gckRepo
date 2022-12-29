@@ -122,33 +122,33 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('requests.create') }}"><i class="fab fa-wpforms" style="color: #f4645f;"></i>
 
-                                    {{ __('Requisition Form') }}
+                                    {{ __('Form') }}
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('requests') }}">
                                     <i class="fas fa-list" style="color: #f4645f;"></i>
-                                    {{ __('Request History') }}
+                                    {{ __('History') }}
                                 </a>
                             </li>
                             @if(auth()->user()->is_admin == 1)
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('requests') }}">
                                     <i class="fas fa-th-ul" style="color: #f4645f;"></i>
-                                    {{ __('All Requests') }}
+                                    {{ __('All') }}
                                 </a>
                             </li>
                             @elseif(auth()->user()->is_admin == 2)
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('requests') }}">
+                                <a class="nav-link" href="{{ route('requests.approved') }}">
                                     <i class="fas fa-list-alt" style="color: #f4645f;"></i>
-                                    {{ __('Approved Requests') }}
+                                    {{ __('Approved') }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('requests.index') }}">
+                                <a class="nav-link" href="{{ route('requests.resolved') }}">
                                     <i class="fas fa-th-list" style="color: #f4645f;"></i>
-                                    {{ __('Resolved Requests') }}
+                                    {{ __('Resolved') }}
                                 </a>
                             </li>
                             

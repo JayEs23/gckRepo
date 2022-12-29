@@ -19,7 +19,6 @@ class RequestController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
 
-        //$data['requests'] = Requisition::all();
         $data = [
             'user' => $user,
             'users' => User::all(),
@@ -29,6 +28,10 @@ class RequestController extends Controller
 
         if ($user->is_admin == 1) {
             $data['requests'] = Requisition::all()->take(9);
+            return view('requests',$data);
+        }
+        else if ($user->is_admin == 2) {
+            $data['requests'] = Requisition::where('status',1)->get();
             return view('requests',$data);
         }else{
             return view('requests',$data);
@@ -85,7 +88,7 @@ class RequestController extends Controller
                 $item->qty = $value['qty'];
                 $item->price = $value['price'];
                 $item->amount = $value['amount'];
-                //$item->save();
+                $item->save();
             }
         }
 
@@ -119,6 +122,13 @@ class RequestController extends Controller
     public function edit($id)
     {
         //
+
+        $data['user'] = auth()->user();
+        $data['request'] = Requisition::find($id);
+        $data['items'] = items::where('request_id',$id);
+        //return $data;
+
+        return view('request',$data);
     }
 
     /**
@@ -131,25 +141,22 @@ class RequestController extends Controller
     public function update(Request $request, $id)
     {
         $req = Requisition::find($id);
-        $req->title = $request['title'];
         $req->phone = $request['phone'];
         $req->category = $request['cat'];
-        $req->department = $request['location'];
-        $req->currency =$request['currency']; 
+        $req->department = $request['department'];
+        $req->currency = empty($request['currency']) ? $req->currency : $request['currency']; 
         $req->amount =$request['amount']; 
         $req->event =$request['event'];
         $req->zone =$request['zone']; 
-        $req->event =$request['cat']; 
-        $req->req_details = $request['purpose'];
-        $req->req_officer_id = $_SESSION['user']['id'];
+        $req->purpose = $request['purpose'];
         $req->email = $request['email'];
         $req->remark = 'Pending';
         $req->status = 0;    
-        $req->date_created = date('Y-m-d h:m:s');
+        $req->updated_at = date('Y-m-d h:m:s');
 
         $stat = $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
     }
 
     /**
@@ -163,39 +170,67 @@ class RequestController extends Controller
         $req = Requisition::find($id);
         $req->delete();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
     }
 
-    public function approve($id){
+    public function approved(){
+        
+        $data['requests'] = Requisition::where('status',1)->get();
+        return view('requests',$data);  
+
+    }
+    public function approve(Request $request){
         //Approve Request
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 1;
+        $req->remark = 'Approved';
         $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
 
     }
-    public function decline($id){
+    public function decline(Request $request){
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 2;
+        $req->remark = $request['remark'];
         $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been declined Successfully.');  
         
     }
-    public function deny($id){
-        $req = Requisition::find($id);
-        $req->status = 3;
-        $req->save();
 
-        return redirect()->route('requests');  
+    public function declined(){
+        $data['requests'] = Requisition::where('status',2)->get();
+        return view('requests',$data);  
     }
 
-    public function resolve($id){
+    public function deny(Request $request){
+        $id = $request['id'];
+        $req = Requisition::find($id);
+        $req->status = 3;
+        $req->remark = $_GET['remark'];
+        $req->save();
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+    }
+
+    public function denied(){
+        $data['requests'] = Requisition::where('status',3)->get();
+        return view('requests',$data);  
+    }
+
+    public function resolve(Request $request){
+        $id = $request['id'];
         $req = Requisition::find($id);
         $req->status = 4;
         $req->save();
 
-        return redirect()->route('requests');  
+        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+    }
+
+    public function resolved(){
+        $data['requests'] = Requisition::where('status',4)->get();
+        return view('requests',$data);  
     }
 }
