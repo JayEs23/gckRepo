@@ -27,13 +27,18 @@ class HomeController extends Controller
         $data = [
             'user' => $user,
             'users' => User::all(),
-            'requests' => Requisition::where('requester_id',$user->id)->get()
+            'requests' => Requisition::where('requester_id',$user->id)->orderBy('id','desc')->get()
         ];
 
         if (auth()->user()->is_admin == 1) {
-            $data['requests'] = Requisition::all();  
+            $data['requests'] = Requisition::orderBy('id','desc')->get();  
+        }elseif(auth()->user()->is_admin == 2){
+            $approved = Requisition::where('status',1)->orderBy('id','desc')->get();
+            $resolved = Requisition::where('status',4)->orderBy('id','desc')->get();
+            $data['requests'] = $approved->merge($resolved);
+            $data['all_requests'] = Requisition::all();
         }
-
+        
         return view('dashboard',$data);
     }
 }
