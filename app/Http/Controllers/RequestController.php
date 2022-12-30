@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Requisition;
 use App\Models\User;
+use App\Model\Document;
 use App\Models\items;
 
 class RequestController extends Controller
@@ -22,16 +23,41 @@ class RequestController extends Controller
         $data = [
             'user' => $user,
             'users' => User::all(),
-            'requests' => Requisition::where('requester_id',$user->id)->get()
+            'requests' => Requisition::where('requester_id',$user->id)->orderBy('id','desc')->get()
         ];
 
 
         if ($user->is_admin == 1) {
-            $data['requests'] = Requisition::all()->take(9);
+            $data['requests'] = Requisition::orderBy('id','desc')->get();
             return view('requests',$data);
         }
-        else if ($user->is_admin == 2) {
-            $data['requests'] = Requisition::where('status',1)->get();
+        elseif ($user->is_admin == 2) {
+           $approved = Requisition::where('status',3)->orderBy('id','desc')->get();
+            $resolved = Requisition::where('status',4)->orderBy('id','desc')->get();
+            $data['requests'] = $approved->merge($resolved);
+            $data['all_requests'] = Requisition::orderBy('id','desc')->get();
+           
+            return view('requests',$data);
+        }elseif ($user->is_admin == 3) {
+            $approved = Requisition::where('status',0)->orderBy('id','desc')->get();
+            $resolved = Requisition::where('status',1)->orderBy('id','desc')->get();
+            $data['requests'] = $approved->merge($resolved);
+            $data['all_requests'] = Requisition::orderBy('id','desc')->get();
+           
+            return view('requests',$data);
+        }elseif ($user->is_admin == 4) {
+           $approved = Requisition::where('status',1)->orderBy('id','desc')->get();
+            $resolved = Requisition::where('status',2)->orderBy('id','desc')->get();
+            $data['requests'] = $approved->merge($resolved);
+            $data['all_requests'] = Requisition::orderBy('id','desc')->get();
+           
+            return view('requests',$data);
+        }elseif ($user->is_admin == 5) {
+           $approved = Requisition::where('status',2)->orderBy('id','desc')->get();
+            $resolved = Requisition::where('status',3)->orderBy('id','desc')->get();
+            $data['requests'] = $approved->merge($resolved);
+            $data['all_requests'] = Requisition::orderBy('id','desc')->get();
+           
             return view('requests',$data);
         }else{
             return view('requests',$data);
@@ -57,6 +83,7 @@ class RequestController extends Controller
      */
     public function store(Request $request)
     {
+        return $request;
         $req = new Requisition();
         $req->title = $request['title'];
         $req->requester = $request['name'];
@@ -68,15 +95,16 @@ class RequestController extends Controller
         $req->amount =$request['amount']; 
         $req->event =$request['event'];
         $req->zone =$request['zone']; 
-        $req->event =$request['cat']; 
         $req->purpose = $request['purpose'];
         $req->email = $request['email'];
         $req->remark = 'Pending';
         $req->status = 0; 
-        $req->date = $request['date'];  
+        $req->date = strtotime($request['date']);  
         $req->created_at = date('Y-m-d h:m:s');
 
         $req->save();
+        
+        $amount = 0;
 
         if ($request['cat'] == 2) {
             foreach ($request->moreFields as $value) {
@@ -89,10 +117,36 @@ class RequestController extends Controller
                 $item->price = $value['price'];
                 $item->amount = $value['amount'];
                 $item->save();
+                $amount = $amount + $item->amount;
             }
+            
+            $reqq = $req = Requisition::find($req->id);
+            $reqq->amount = $amount;
+            $reqq->save();
+        }
+        
+        // Get the uploaded files
+        $documents = $request->file('documents');
+        
+        // Process each uploaded file
+        foreach ($documents as $document) {
+            $fileName = uniqid() . '.' . $document->extension();
+            
+            $document->storeAs('documents', $fileName);
+            
+            Document::create([
+                'request_id' => $req->id,
+                'name' => $fileName,
+                'original_name' => $document->getClientOriginalName(),
+                'size' => $document->getSize(),
+                'mime_type' => $document->getMimeType()
+            ]);
         }
 
-        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+        
+        
+
+        return redirect()->route('requests')->with('success', 'Your Request Has Been Submitted Successfully pending approval');  
     }
 
     /**
@@ -150,7 +204,7 @@ class RequestController extends Controller
         $req->zone =$request['zone']; 
         $req->purpose = $request['purpose'];
         $req->email = $request['email'];
-        $req->remark = 'Pending';
+        $req->remark = 'Edited';
         $req->status = 0;    
         $req->updated_at = date('Y-m-d h:m:s');
 
@@ -170,12 +224,13 @@ class RequestController extends Controller
         $req = Requisition::find($id);
         $req->delete();
 
-        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+        return redirect()->route('requests')->with('success', 'Request Has Been deleted Successfully.');  
     }
 
     public function approved(){
         
-        $data['requests'] = Requisition::where('status',1)->get();
+        $data['requests'] = Requisition::where('status',1)->orderBy('id','desc')->get();
+        $data['all_requests'] = Requisition::all();
         return view('requests',$data);  
 
     }
@@ -187,7 +242,7 @@ class RequestController extends Controller
         $req->remark = 'Approved';
         $req->save();
 
-        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+        return redirect()->route('requests')->with('success', 'Request Has Been approved Successfully.');  
 
     }
     public function decline(Request $request){
@@ -209,10 +264,10 @@ class RequestController extends Controller
     public function deny(Request $request){
         $id = $request['id'];
         $req = Requisition::find($id);
+        $req->remark = $request['remark'];
         $req->status = 3;
-        $req->remark = $_GET['remark'];
         $req->save();
-        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+        return redirect()->route('requests')->with('success', 'Request Has Been denied Successfully.');  
     }
 
     public function denied(){
@@ -226,11 +281,12 @@ class RequestController extends Controller
         $req->status = 4;
         $req->save();
 
-        return redirect()->route('requests')->with('success', 'Request Has Been Created Successfully.');  
+        return redirect()->route('requests')->with('success', 'Request Has Been resolved Successfully.');  
     }
 
     public function resolved(){
-        $data['requests'] = Requisition::where('status',4)->get();
+        $data['all_requests'] = Requisition::all();
+        $data['requests'] = Requisition::where('status',4)->orderBy('id','desc')->get();
         return view('requests',$data);  
     }
 }

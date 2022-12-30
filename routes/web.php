@@ -42,6 +42,17 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/users/{id}/makeAdmin', 'App\Http\Controllers\UserController@makeAdmin')->name('users.makeAdmin');
 	Route::get('/users/{id}/makeAccount', 'App\Http\Controllers\UserController@makeAccount')->name('users.makeAccount');
 	Route::get('/users/{id}/makeUser', 'App\Http\Controllers\UserController@makeUser')->name('users.makeUser');
+	Route::get('zone/create', 'ZoneController@create');
+	Route::post('zone/store', 'ZoneController@store');
+	Route::get('zone/{id}/edit', 'ZoneController@edit');
+	Route::patch('zone/{id}', 'ZoneController@update');
+	Route::delete('zone/{id}', 'ZoneController@destroy');
+
+	Route::get('department/create', 'DepartmentController@create');
+	Route::post('department/store', 'DepartmentController@store');
+	Route::get('department/{id}/edit', 'DepartmentController@edit');
+	Route::patch('department/{id}', 'DepartmentController@update');
+	Route::delete('department/{id}', 'DepartmentController@destroy');
 
 	//requests
 	Route::get('/requests', 'App\Http\Controllers\RequestController@index')->name('requests');

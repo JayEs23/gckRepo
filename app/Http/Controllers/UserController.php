@@ -106,6 +106,7 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * 1 Admin, 2 Accounts, 3 Depat. Head, 4 Zonale Head. 5 Planning Cmt
      */
     public function destroy($id)
     {
@@ -126,6 +127,33 @@ class UserController extends Controller
     public function makeAccount($id){
         $user = User::Find($id);
         $user->is_admin = 2;
+        $user->save();
+
+        return redirect()->route('users')->with('success', 'User Has Been updated Successfully.');  
+        
+    } 
+    
+    public function makeDeptHead($id){
+        $user = User::Find($id);
+        $user->is_admin = 3;
+        $user->save();
+
+        return redirect()->route('users')->with('success', 'User Has Been updated Successfully.');  
+        
+    } 
+    
+    public function makeZonalHead($id){
+        $user = User::Find($id);
+        $user->is_admin = 4;
+        $user->save();
+
+        return redirect()->route('users')->with('success', 'User Has Been updated Successfully.');  
+        
+    } 
+    
+    public function makePlanner($id){
+        $user = User::Find($id);
+        $user->is_admin = 5;
         $user->save();
 
         return redirect()->route('users')->with('success', 'User Has Been updated Successfully.');  
