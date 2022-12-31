@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('recipient_id');
             $table->string('subject');
             $table->string('message');
+            $table->string('type');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

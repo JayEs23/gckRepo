@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->integer('');
-            $table->string('');
+            $table->integer('sender');
+            $table->integer('reciever');
+            $table->text('message');
+            $table->integer('type');
+            $table->boolean('status');
             $table->timestamps();
         });
     }
