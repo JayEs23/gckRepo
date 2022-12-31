@@ -9,3 +9,4 @@ class Zone extends Model
 {
     use HasFactory;
 }
+
